@@ -28,6 +28,9 @@ func load(ctx appengine.Context, key string) string {
 	keyx := datastore.NewKey(ctx, "Entry", key, 0, nil)
 	if err := datastore.Get(ctx, keyx, &entry); err != nil {
 		log.Printf("Key not found")
+		// Not needed, but makes it easier to add new entries.
+		// Be careful with this. A melicious user or bot could end
+		// up creating a lot of datastore entries.
 		create(ctx, key)
 		return kDefaultUrl
 	}
