@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ $# -ne 1 ]; then
+  echo "Usage: $0 APP_ID"
+  exit 1
+fi
+
+/home/nathan/go_appengine/goapp deploy -application "$1" src/
