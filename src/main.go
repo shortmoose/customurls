@@ -1,9 +1,10 @@
 package main
 
 import (
-	"appengine"
-	"appengine/datastore"
-	"log"
+	"golang.org/x/net/context"
+	"google.golang.org/appengine"
+	"google.golang.org/appengine/datastore"
+	"google.golang.org/appengine/log"
 	"net/http"
 	"strings"
 	"time"
@@ -21,20 +22,20 @@ type LogEntry struct {
 
 const kDefaultUrl = "http://www.google.com"
 
-func create(ctx appengine.Context, key string) {
+func create(ctx context.Context, key string) {
 	entry := new(Entry)
 	entry.Value = kDefaultUrl
 	keyx := datastore.NewKey(ctx, "Entry", key, 0, nil)
 	if _, err := datastore.Put(ctx, keyx, entry); err != nil {
-		log.Printf("Insertion failed")
+		log.Warningf(ctx, "Insertion failed")
 	}
 }
 
-func load(ctx appengine.Context, key string) string {
+func load(ctx context.Context, key string) string {
 	var entry Entry
 	keyx := datastore.NewKey(ctx, "Entry", key, 0, nil)
 	if err := datastore.Get(ctx, keyx, &entry); err != nil {
-		log.Printf("Key not found")
+		log.Warningf(ctx, "Key not found")
 		// Not needed, but makes it easier to add new entries.
 		// Be careful with this. A melicious user or bot could end
 		// up creating a lot of datastore entries.
@@ -48,7 +49,7 @@ func load(ctx appengine.Context, key string) string {
 	log_entry.Timestamp = time.Now()
 	key2 := datastore.NewIncompleteKey(ctx, "LogEntry", nil)
 	if _, err := datastore.Put(ctx, key2, log_entry); err != nil {
-		log.Printf("Log entry failed")
+		log.Warningf(ctx, "Log entry failed")
 	}
 
 	return entry.Value
