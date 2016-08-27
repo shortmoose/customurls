@@ -6,10 +6,17 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type Entry struct {
 	Value string `datastore:"value,noindex"`
+}
+
+type LogEntry struct {
+	Key       string    `datastore:",noindex"`
+	Url       string    `datastore:",noindex"`
+	Timestamp time.Time `datastore:",noindex"`
 }
 
 const kDefaultUrl = "http://www.google.com"
@@ -33,6 +40,15 @@ func load(ctx appengine.Context, key string) string {
 		// up creating a lot of datastore entries.
 		create(ctx, key)
 		return kDefaultUrl
+	}
+
+	log_entry := new(LogEntry)
+	log_entry.Key = key
+	log_entry.Url = entry.Value
+	log_entry.Timestamp = time.Now()
+	key2 := datastore.NewIncompleteKey(ctx, "LogEntry", nil)
+	if _, err := datastore.Put(ctx, key2, log_entry); err != nil {
+		log.Printf("Log entry failed")
 	}
 
 	return entry.Value
