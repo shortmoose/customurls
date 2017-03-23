@@ -1,0 +1,6 @@
+package config
+
+const (
+	ProjectID     = "test-app"
+        MagicKey      = "No one will ever guess this."
+)

@@ -5,4 +5,4 @@ if [ $# -ne 1 ]; then
   exit 1
 fi
 
-/home/nathan/go_appengine/goapp deploy -application "$1" src/
+/home/nathan/go_appengine/goapp deploy -application "$1" gaeweb/
