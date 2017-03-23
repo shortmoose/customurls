@@ -1,9 +1,9 @@
 package config
 
 const (
-        # Set the following to your AppEngine project ID (name).
-	#ProjectID = "app-name"
+        // Set the following to your AppEngine project ID (name).
+	//ProjectID = "app-name"
 
-        # Set the following to the path of your project.
-	#Path      = "/home/..."
+        // Set the following to the path of your project.
+	//Path      = "/home/..."
 )
