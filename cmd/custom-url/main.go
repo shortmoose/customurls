@@ -19,7 +19,7 @@ func runCmd(command_line string) {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
-		log.Fatalf("Error running command")
+		log.Printf("Error running command")
 	}
 }
 
@@ -33,7 +33,12 @@ func upload() {
 }
 
 func watch() {
-	runCmd("go-build")
+	for {
+		runCmd("go generate ./...")
+		runCmd("go test ./...")
+		runCmd("go install ./...")
+		runCmd("inotifywait -qr -e modify,create,delete .")
+	}
 }
 
 func main() {
