@@ -1,6 +1,9 @@
 package config
 
 const (
-	ProjectID     = "test-app"
-        MagicKey      = "No one will ever guess this."
+        # Set the following to your AppEngine project ID (name).
+	#ProjectID = "app-name"
+
+        # Set the following to the path of your project.
+	#Path      = "/home/..."
 )
