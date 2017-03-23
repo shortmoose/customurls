@@ -8,7 +8,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/nthnca/customurl/config"
+	"github.com/nthnca/customurls/config"
 )
 
 func runCmd(command_line string) {
