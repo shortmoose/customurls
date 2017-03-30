@@ -7,24 +7,26 @@ import (
 	"github.com/nthnca/customurls/config"
 	"github.com/nthnca/customurls/data/client"
 
+	"github.com/nthnca/datastore"
 	"golang.org/x/net/context"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/log"
 )
 
 func load(ctx context.Context, key, url string) string {
-	entry, err := client.LoadEntry(ctx, key)
+	clt := datastore.NewGaeClient(ctx)
+	entry, err := client.LoadEntry(clt, key)
 	if err != nil {
 		log.Warningf(ctx, "Key not found: %s", key)
 		if len(url) > 4 && url[:4] == "http" {
 			log.Infof(ctx, "Inserting %s:%s", key, url)
-			client.CreateEntry(ctx, key, url)
+			client.CreateEntry(clt, key, url)
 		}
 		return config.DefaultUrl
 	}
 
 	log.Infof(ctx, "Redirecting %s:%s", key, entry.Value)
-	client.CreateLogEntry(ctx, key, entry.Value)
+	client.CreateLogEntry(clt, key, entry.Value)
 	return entry.Value
 }
 
