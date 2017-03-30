@@ -1,7 +1,6 @@
 package client
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/nthnca/customurls/data/entity"
@@ -10,9 +9,9 @@ import (
 
 func LoadEntry(c datastore.Client, key string) (*entity.Entry, error) {
 	var entry entity.Entry
-	keyx := c.NameKey("Entry", key)
+	keyx := c.NameKey("Entry", key, nil)
 	if err := c.Get(keyx, &entry); err != nil {
-		return nil, fmt.Errorf("Key not found: %v", err)
+		return nil, err
 	}
 	return &entry, nil
 }
@@ -20,7 +19,7 @@ func LoadEntry(c datastore.Client, key string) (*entity.Entry, error) {
 func CreateEntry(c datastore.Client, key, url string) error {
 	entry := new(entity.Entry)
 	entry.Value = url
-	keyx := c.NameKey("Entry", key)
+	keyx := c.NameKey("Entry", key, nil)
 	if _, err := c.Put(keyx, entry); err != nil {
 		return err
 	}
@@ -32,7 +31,7 @@ func CreateLogEntry(c datastore.Client, key, url string) error {
 	entry.Key = key
 	entry.Url = url
 	entry.Timestamp = time.Now()
-	keyx := c.IncompleteKey("LogEntry")
+	keyx := c.IncompleteKey("LogEntry", nil)
 	if _, err := c.Put(keyx, entry); err != nil {
 		return err
 	}

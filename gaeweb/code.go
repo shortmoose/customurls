@@ -14,10 +14,13 @@ import (
 )
 
 func load(ctx context.Context, key, url string) string {
+	if key == "" {
+		return config.DefaultUrl
+	}
 	clt := datastore.NewGaeClient(ctx)
 	entry, err := client.LoadEntry(clt, key)
 	if err != nil {
-		log.Warningf(ctx, "Key not found: %s", key)
+		log.Warningf(ctx, "Unable to load '%s': %v", key, err)
 		if len(url) > 4 && url[:4] == "http" {
 			log.Infof(ctx, "Inserting %s:%s", key, url)
 			client.CreateEntry(clt, key, url)
@@ -25,17 +28,30 @@ func load(ctx context.Context, key, url string) string {
 		return config.DefaultUrl
 	}
 
-	log.Infof(ctx, "Redirecting %s:%s", key, entry.Value)
+	log.Infof(ctx, "Redirecting %s to %s", key, entry.Value)
 	client.CreateLogEntry(clt, key, entry.Value)
 	return entry.Value
 }
 
-func getNewUrl(r *http.Request) string {
+func getKey(r *http.Request) string {
+	key := strings.TrimLeft(r.URL.Path, "/")
+	if key != "" {
+		return key
+	}
+
+	if v, ok := r.URL.Query()["key"]; ok && v[0] != "" {
+		return v[0]
+	}
+
+	return ""
+}
+
+func getUrl(r *http.Request) string {
 	if config.Check == "" {
 		return ""
 	}
 
-	if v, ok := r.URL.Query()["pass"]; !ok || v[0] != config.Check {
+	if v, ok := r.URL.Query()["check"]; !ok || v[0] != config.Check {
 		return ""
 	}
 
@@ -47,7 +63,7 @@ func getNewUrl(r *http.Request) string {
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
-	url := load(ctx, strings.TrimLeft(r.URL.Path, "/"), getNewUrl(r))
+	url := load(ctx, strings.ToLower(getKey(r)), getUrl(r))
 	http.Redirect(w, r, url, 302)
 }
 

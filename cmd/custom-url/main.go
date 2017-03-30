@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 	"os"
-
-	"google.golang.org/api/iterator"
+	"sort"
+	"time"
 
 	"github.com/nthnca/customurls/config"
 	"github.com/nthnca/customurls/data/client"
@@ -69,24 +69,65 @@ func (c *keyContext) set(_ *kingpin.ParseContext) error {
 	return nil
 }
 
+type Test struct {
+	key     string
+	url     string
+	week    int
+	month   int
+	allTime int
+}
+
 func ls(_ *kingpin.ParseContext) error {
 	clt, err := datastore.NewCloudClient(config.ProjectID)
 	if err != nil {
 		log.Fatalf("Failed to create client: %v\n", err)
 	}
 
-	for it := clt.Run(clt.NewQuery("Entry")); ; {
-		var entry entity.Entry
-		k, err := it.Next(&entry)
-		if err == iterator.Done {
-			break
-		}
-		if err != nil {
-			fmt.Printf("%v %v\n", err, iterator.Done)
+	data := make(map[string]Test)
 
-			return nil
+	var entries []entity.Entry
+	keys, _ := clt.GetAll(clt.NewQuery("Entry"), &entries)
+
+	for i := range entries {
+		data[keys[i].GetName()] = Test{
+			key: keys[i].GetName(),
+			url: entries[i].Value}
+	}
+
+	var logs []entity.LogEntry
+	clt.GetAll(clt.NewQuery("LogEntry"), &logs)
+
+	now := time.Now()
+	week := now.Add(-time.Hour * 24 * 7)
+	month := now.Add(-time.Hour * 28 * 24 * 7)
+
+	for _, log := range logs {
+		e, ok := data[log.Key]
+		if !ok {
+			continue
 		}
-		fmt.Printf("%v:%v\n", k.GetName(), entry)
+		if log.Timestamp.After(week) {
+			e.week += 1
+		}
+		if log.Timestamp.After(month) {
+			e.month += 1
+		}
+		e.allTime += 1
+		data[log.Key] = e
+	}
+
+	var arr []Test
+	for _, value := range data {
+		arr = append(arr, value)
+	}
+
+	sort.Slice(arr, func(i, j int) bool {
+		return arr[i].week < arr[j].week
+	})
+
+	for _, y := range arr {
+		fmt.Printf("%-15s %4d %4d %4d\n", y.key, y.week, y.month,
+			y.allTime)
 	}
 
 	return nil
