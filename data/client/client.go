@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/nthnca/customurls/data/entity"
+
 	"github.com/nthnca/datastore"
 )
 

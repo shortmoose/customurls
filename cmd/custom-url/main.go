@@ -10,6 +10,7 @@ import (
 	"github.com/nthnca/customurls/config"
 	"github.com/nthnca/customurls/data/client"
 	"github.com/nthnca/customurls/data/entity"
+
 	"github.com/nthnca/datastore"
 	"github.com/nthnca/easybuild"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
@@ -69,7 +70,7 @@ func (c *keyContext) set(_ *kingpin.ParseContext) error {
 	return nil
 }
 
-type Test struct {
+type test struct {
 	key     string
 	url     string
 	week    int
@@ -83,13 +84,13 @@ func ls(_ *kingpin.ParseContext) error {
 		log.Fatalf("Failed to create client: %v\n", err)
 	}
 
-	data := make(map[string]Test)
+	data := make(map[string]test)
 
 	var entries []entity.Entry
 	keys, _ := clt.GetAll(clt.NewQuery("Entry"), &entries)
 
 	for i := range entries {
-		data[keys[i].GetName()] = Test{
+		data[keys[i].GetName()] = test{
 			key: keys[i].GetName(),
 			url: entries[i].Value}
 	}
@@ -99,7 +100,7 @@ func ls(_ *kingpin.ParseContext) error {
 
 	now := time.Now()
 	week := now.Add(-time.Hour * 24 * 7)
-	month := now.Add(-time.Hour * 28 * 24 * 7)
+	month := now.Add(-time.Hour * 24 * 7 * 28)
 
 	for _, log := range logs {
 		e, ok := data[log.Key]
@@ -107,22 +108,28 @@ func ls(_ *kingpin.ParseContext) error {
 			continue
 		}
 		if log.Timestamp.After(week) {
-			e.week += 1
+			e.week++
 		}
 		if log.Timestamp.After(month) {
-			e.month += 1
+			e.month++
 		}
-		e.allTime += 1
+		e.allTime++
 		data[log.Key] = e
 	}
 
-	var arr []Test
+	var arr []test
 	for _, value := range data {
 		arr = append(arr, value)
 	}
 
 	sort.Slice(arr, func(i, j int) bool {
-		return arr[i].week < arr[j].week
+		if arr[i].week != arr[j].week {
+			return arr[i].week < arr[j].week
+		}
+		if arr[i].month != arr[j].month {
+			return arr[i].month < arr[j].month
+		}
+		return arr[i].allTime < arr[j].allTime
 	})
 
 	for _, y := range arr {

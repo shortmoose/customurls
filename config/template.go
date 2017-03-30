@@ -1,15 +1,15 @@
 package config
 
 const (
-// Set the following to your AppEngine project ID (name).
-//ProjectID = "app-name"
+// ProjectID is the app-engine project to upload to.
+// ProjectID = "app-name"
 
-// Set the following to the path of your project.
-//Path      = "/home/..."
+// Path is the filepath to this repository.
+// Path = "/home/user/go/src/github.com/nthnca/customurls"
 
-// This allows you to use a
-// Check      = "supersecret"
+// Check is the very basic password you can use to set custom URLs.
+// Check = "supersecret"
 
-// Tada
-// DefaultUrl = "http://www.google.com"
+// This is the default URL that requests to this app will redirect to.
+// DefaultURL = "http://www.google.com"
 )

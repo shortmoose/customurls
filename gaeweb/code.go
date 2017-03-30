@@ -15,7 +15,7 @@ import (
 
 func load(ctx context.Context, key, url string) string {
 	if key == "" {
-		return config.DefaultUrl
+		return config.DefaultURL
 	}
 	clt := datastore.NewGaeClient(ctx)
 	entry, err := client.LoadEntry(clt, key)
@@ -25,7 +25,7 @@ func load(ctx context.Context, key, url string) string {
 			log.Infof(ctx, "Inserting %s:%s", key, url)
 			client.CreateEntry(clt, key, url)
 		}
-		return config.DefaultUrl
+		return config.DefaultURL
 	}
 
 	log.Infof(ctx, "Redirecting %s to %s", key, entry.Value)
@@ -46,7 +46,7 @@ func getKey(r *http.Request) string {
 	return ""
 }
 
-func getUrl(r *http.Request) string {
+func getURL(r *http.Request) string {
 	if config.Check == "" {
 		return ""
 	}
@@ -63,7 +63,7 @@ func getUrl(r *http.Request) string {
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
-	url := load(ctx, strings.ToLower(getKey(r)), getUrl(r))
+	url := load(ctx, strings.ToLower(getKey(r)), getURL(r))
 	http.Redirect(w, r, url, 302)
 }
 
