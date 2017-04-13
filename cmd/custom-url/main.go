@@ -12,7 +12,7 @@ import (
 	"github.com/nthnca/customurls/data/entity"
 
 	"github.com/nthnca/datastore"
-	"github.com/nthnca/easybuild"
+	"github.com/nthnca/gobuild"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
 
@@ -25,7 +25,7 @@ func main() {
 	app := kingpin.New(
 		"custom-url",
 		"URL shortening service that runs in Google AppEngine")
-	easybuild.RegisterCommands(app, config.Path, config.ProjectID)
+	gobuild.RegisterCommands(app, config.Path, config.ProjectID)
 
 	get := &keyContext{}
 	getCmd := app.Command("get", "Get URL of given key").Action(get.get)
