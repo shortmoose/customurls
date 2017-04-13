@@ -70,7 +70,7 @@ func (c *keyContext) set(_ *kingpin.ParseContext) error {
 	return nil
 }
 
-type test struct {
+type usage struct {
 	key     string
 	url     string
 	week    int
@@ -84,13 +84,13 @@ func ls(_ *kingpin.ParseContext) error {
 		log.Fatalf("Failed to create client: %v\n", err)
 	}
 
-	data := make(map[string]test)
+	data := make(map[string]usage)
 
 	var entries []entity.Entry
 	keys, _ := clt.GetAll(clt.NewQuery("Entry"), &entries)
 
 	for i := range entries {
-		data[keys[i].GetName()] = test{
+		data[keys[i].GetName()] = usage{
 			key: keys[i].GetName(),
 			url: entries[i].Value}
 	}
@@ -117,7 +117,7 @@ func ls(_ *kingpin.ParseContext) error {
 		data[log.Key] = e
 	}
 
-	var arr []test
+	var arr []usage
 	for _, value := range data {
 		arr = append(arr, value)
 	}

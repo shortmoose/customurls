@@ -1,6 +1,7 @@
 package code
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -12,6 +13,21 @@ import (
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/log"
 )
+
+func showForm(w http.ResponseWriter) {
+	html := `<html>
+<form name="addgolink" action="https://%s.appspot.com">
+Key:<br />
+<input type="text" name="key"><br />
+URL:<br />
+<input type="text" name="url"><br />
+Validate:<br />
+<input type="text" name="check"><br />
+<br />
+<input type="submit" value="Submit">
+</form></html>`
+	fmt.Fprintf(w, html, config.ProjectID)
+}
 
 func load(ctx context.Context, key, url string) string {
 	if key == "" {
@@ -63,8 +79,13 @@ func getURL(r *http.Request) string {
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
-	url := load(ctx, strings.ToLower(getKey(r)), getURL(r))
-	http.Redirect(w, r, url, 302)
+	key := strings.ToLower(getKey(r))
+	if key == config.AddPageKey {
+		showForm(w)
+	} else {
+		url := load(ctx, strings.ToLower(getKey(r)), getURL(r))
+		http.Redirect(w, r, url, 302)
+	}
 }
 
 func init() {

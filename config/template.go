@@ -2,7 +2,7 @@ package config
 
 const (
 // ProjectID is the app-engine project to upload to.
-// ProjectID = "app-name"
+// ProjectID = "appname"
 
 // Path is the filepath to this repository.
 // Path = "/home/user/go/src/github.com/nthnca/customurls"
@@ -12,4 +12,7 @@ const (
 
 // This is the default URL that requests to this app will redirect to.
 // DefaultURL = "http://www.google.com"
+
+// AddPageKey is the add URL form page.
+// AddPageKey = "newkey"
 )
