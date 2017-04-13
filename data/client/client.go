@@ -8,6 +8,7 @@ import (
 	"github.com/nthnca/datastore"
 )
 
+// LoadEntry loads the entry for the given key.
 func LoadEntry(c datastore.Client, key string) (*entity.Entry, error) {
 	var entry entity.Entry
 	keyx := c.NameKey("Entry", key, nil)
@@ -17,6 +18,7 @@ func LoadEntry(c datastore.Client, key string) (*entity.Entry, error) {
 	return &entry, nil
 }
 
+// CreateEntry saves a value (url) for the given key.
 func CreateEntry(c datastore.Client, key, url string) error {
 	entry := new(entity.Entry)
 	entry.Value = url
@@ -27,10 +29,11 @@ func CreateEntry(c datastore.Client, key, url string) error {
 	return nil
 }
 
+// CreateLogEntry adds a log entry that a user loaded a given key.
 func CreateLogEntry(c datastore.Client, key, url string) error {
 	entry := new(entity.LogEntry)
 	entry.Key = key
-	entry.Url = url
+	entry.URL = url
 	entry.Timestamp = time.Now()
 	keyx := c.IncompleteKey("LogEntry", nil)
 	if _, err := c.Put(keyx, entry); err != nil {
