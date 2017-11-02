@@ -96,7 +96,11 @@ func ls(_ *kingpin.ParseContext) error {
 	}
 
 	var logs []entity.LogEntry
-	clt.GetAll(clt.NewQuery("LogEntry"), &logs)
+	_, err = clt.GetAll(clt.NewQuery("LogEntry"), &logs)
+	if err != nil {
+		log.Fatalf("Unable to get log entries: %v\n", err)
+	}
+
 
 	now := time.Now()
 	week := now.Add(-time.Hour * 24 * 7)
