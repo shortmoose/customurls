@@ -16,6 +16,13 @@ go install ./...
 
 ## Basic Use
 
+To start with you will need to login to your account using gcloud. So for
+example if you are using a robot account you will need to:
+- create credentials
+- save them to file
+- set environment variable to point to file
+  - For more info see
+    https://developers.google.com/identity/protocols/application-default-credentials
 - run 'customurls upload'
 - the steps here are based on the default values in config/template.go
 - go to http://appname.appspot.com/newkey
