@@ -4,12 +4,19 @@ Custom URL service - runs on Google appengine
 
 ## Installation
 
-- run 'go get -u github.com/nthnca/customurls/...'
-- edit 'customurls/config/template.go'
-- run 'customurls upload'
+```shell
+mkdir -p go/src/github.com/nthnca
+cd go/src/github.com/nthnca
+git clone https://github.com/nthnca/customurls.git
+cd customurls
+cp config/template.go config/config.go
+# vim config/config.go
+go install ./...
+```
 
 ## Basic Use
 
+- run 'customurls upload'
 - the steps here are based on the default values in config/template.go
 - go to http://appname.appspot.com/newkey
 - fill out the form with a key, URL, and validate key of "supersecret"
