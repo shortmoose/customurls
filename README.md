@@ -11,6 +11,7 @@ git clone https://github.com/nthnca/customurls.git
 cd customurls
 cp config/template.go config/config.go
 # vim config/config.go
+go get ./...
 go install ./...
 ```
 
