@@ -101,7 +101,6 @@ func ls(_ *kingpin.ParseContext) error {
 		log.Fatalf("Unable to get log entries: %v\n", err)
 	}
 
-
 	now := time.Now()
 	week := now.Add(-time.Hour * 24 * 7)
 	month := now.Add(-time.Hour * 24 * 7 * 28)
