@@ -3,7 +3,7 @@ package client
 import (
 	"time"
 
-	"github.com/nthnca/customurls/data/entity"
+	"github.com/nthnca/customurls/lib/data/entity"
 
 	"github.com/nthnca/datastore"
 )

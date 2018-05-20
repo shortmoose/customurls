@@ -3,14 +3,13 @@ package code
 import (
 	"fmt"
 	"net/http"
-	"regexp"
 	"sort"
-	"strings"
 	"time"
 
-	"github.com/nthnca/customurls/config"
-	"github.com/nthnca/customurls/data/client"
-	"github.com/nthnca/customurls/data/entity"
+	"github.com/nthnca/customurls/lib/config"
+	"github.com/nthnca/customurls/lib/data/client"
+	"github.com/nthnca/customurls/lib/data/entity"
+	"github.com/nthnca/customurls/lib/util"
 
 	"github.com/nthnca/datastore"
 	"google.golang.org/appengine"
@@ -87,22 +86,13 @@ func showStats(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Returns a lowercase version of the given string, returns an empty string if invalid.
-func getKey(str string) string {
-	if !regexp.MustCompile(`^[A-Za-z0-9-]+$`).MatchString(str) {
-		return ""
-	}
-
-	return strings.ToLower(str)
-}
-
-func redirectAndLog(w http.ResponseWriter, r *http.Request, key string) {
+func redirectAndLog(cfg *config.Instance, w http.ResponseWriter, r *http.Request, key string) {
 	ctx := appengine.NewContext(r)
 
-	key = getKey(key)
+	key = util.GetKey(key)
 	if key == "" {
 		log.Warningf(ctx, "Invalid key attempted.")
-		http.Redirect(w, r, config.DefaultURL, 302)
+		http.Redirect(w, r, cfg.DefaultURL, 302)
 		return
 	}
 
@@ -118,12 +108,12 @@ func redirectAndLog(w http.ResponseWriter, r *http.Request, key string) {
 	http.Redirect(w, r, entry.Value, 302)
 }
 
-func showUrlModificationForm(w http.ResponseWriter, r *http.Request, key string) {
+func showUrlModificationForm(cfg *config.Instance, w http.ResponseWriter, r *http.Request, key string) {
 	ctx := appengine.NewContext(r)
-	key = getKey(key)
+	key = util.GetKey(key)
 	if key == "" {
 		log.Warningf(ctx, "Invalid key attempted.")
-		http.Redirect(w, r, config.DefaultURL, 302)
+		http.Redirect(w, r, cfg.DefaultURL, 302)
 		return
 	}
 
@@ -153,18 +143,18 @@ Validate:<br />
 	fmt.Fprintf(w, html, key, url)
 }
 
-func saveUrl(w http.ResponseWriter, r *http.Request) {
+func saveUrl(cfg *config.Instance, w http.ResponseWriter, r *http.Request) {
 	// config.Check of "", means readonly system.
-	if config.Check == "" {
+	if cfg.Check == "" {
 		return
 	}
 
-	if r.FormValue("check") != config.Check {
+	if r.FormValue("check") != cfg.Check {
 		return
 	}
 
 	ctx := appengine.NewContext(r)
-	key := getKey(r.FormValue("key"))
+	key := util.GetKey(r.FormValue("key"))
 	if key == "" {
 		log.Warningf(ctx, "Invalid Key %s", key)
 		return
@@ -178,18 +168,20 @@ func saveUrl(w http.ResponseWriter, r *http.Request) {
 
 	clt := datastore.NewGaeClient(ctx)
 	client.CreateEntry(clt, key, url)
-	return
+	http.Redirect(w, r, url, 302)
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
+	cfg := config.Get()
+	size := len(cfg.AdminPath) + 2
 	if r.Method == "POST" {
-		saveUrl(w, r)
-	} else if "/x/ls" == r.URL.Path {
+		saveUrl(cfg, w, r)
+	} else if "/"+cfg.AdminPath+"/ls" == r.URL.Path {
 		showStats(w, r)
-	} else if len(r.URL.Path) > 3 && "/x/" == r.URL.Path[:3] {
-		showUrlModificationForm(w, r, r.URL.Path[3:])
+	} else if len(r.URL.Path) > size && "/"+cfg.AdminPath+"/" == r.URL.Path[:size] {
+		showUrlModificationForm(cfg, w, r, r.URL.Path[size:])
 	} else {
-		redirectAndLog(w, r, r.URL.Path[1:])
+		redirectAndLog(cfg, w, r, r.URL.Path[1:])
 	}
 }
 

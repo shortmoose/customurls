@@ -7,12 +7,11 @@ import (
 	"sort"
 	"time"
 
-	"github.com/nthnca/customurls/config"
-	"github.com/nthnca/customurls/data/client"
-	"github.com/nthnca/customurls/data/entity"
+	"github.com/nthnca/customurls/lib/config"
+	"github.com/nthnca/customurls/lib/data/client"
+	"github.com/nthnca/customurls/lib/data/entity"
 
 	"github.com/nthnca/datastore"
-	"github.com/nthnca/gobuild"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
 
@@ -25,7 +24,6 @@ func main() {
 	app := kingpin.New(
 		"custom-url",
 		"URL shortening service that runs in Google AppEngine")
-	gobuild.RegisterCommands(app, config.Path, config.ProjectID)
 
 	get := &keyContext{}
 	getCmd := app.Command("get", "Get URL of given key").Action(get.get)
@@ -42,7 +40,7 @@ func main() {
 }
 
 func (c *keyContext) get(_ *kingpin.ParseContext) error {
-	clt, err := datastore.NewCloudClient(config.ProjectID)
+	clt, err := datastore.NewCloudClient(config.Get().ProjectID)
 	if err != nil {
 		log.Fatalf("Failed to create client: %v\n", err)
 	}
@@ -57,7 +55,7 @@ func (c *keyContext) get(_ *kingpin.ParseContext) error {
 }
 
 func (c *keyContext) set(_ *kingpin.ParseContext) error {
-	clt, err := datastore.NewCloudClient(config.ProjectID)
+	clt, err := datastore.NewCloudClient(config.Get().ProjectID)
 	if err != nil {
 		log.Fatalf("Failed to create client: %v\n", err)
 	}
@@ -79,7 +77,7 @@ type usage struct {
 }
 
 func ls(_ *kingpin.ParseContext) error {
-	clt, err := datastore.NewCloudClient(config.ProjectID)
+	clt, err := datastore.NewCloudClient(config.Get().ProjectID)
 	if err != nil {
 		log.Fatalf("Failed to create client: %v\n", err)
 	}
