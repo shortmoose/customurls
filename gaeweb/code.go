@@ -103,6 +103,7 @@ func redirectAndLog(cfg *config.Instance, w http.ResponseWriter, r *http.Request
 	entry, err := client.LoadEntry(clt, key)
 	if err != nil {
 		log.Warningf(ctx, "Unable to load '%s': %v", key, err)
+		http.Redirect(w, r, cfg.DefaultURL, 302)
 		return
 	}
 
