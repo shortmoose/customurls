@@ -29,6 +29,15 @@ func CreateEntry(c datastore.Client, key, url string) error {
 	return nil
 }
 
+// DeleteEntry removes the given key.
+func DeleteEntry(c datastore.Client, key string) error {
+	keyx := c.NameKey("Entry", key, nil)
+	if err := c.Delete(keyx); err != nil {
+		return err
+	}
+	return nil
+}
+
 // CreateLogEntry adds a log entry that a user loaded a given key.
 func CreateLogEntry(c datastore.Client, key, url string) error {
 	entry := new(entity.LogEntry)

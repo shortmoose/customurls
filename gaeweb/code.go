@@ -14,6 +14,7 @@ import (
 	"github.com/nthnca/datastore"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/log"
+	"google.golang.org/appengine/user"
 )
 
 type usage struct {
@@ -87,6 +88,8 @@ func showStats(w http.ResponseWriter, r *http.Request) {
 			y.allTime)
 	}
 	fmt.Fprintf(w, "</pre>\n")
+	url, _ := user.LogoutURL(ctx, "/")
+	fmt.Fprintf(w, `<a href="%s">sign out</a>)`, url)
 }
 
 func redirectAndLog(cfg *config.Instance, w http.ResponseWriter, r *http.Request, key string) {
@@ -167,7 +170,7 @@ func saveUrl(cfg *config.Instance, w http.ResponseWriter, r *http.Request) {
 	url := r.FormValue("url")
 	if len(url) == 0 {
 		clt := datastore.NewGaeClient(ctx)
-		clt.Delete(key)
+		client.DeleteEntry(clt, key)
 		return
 	} else if len(url) < 4 || url[:4] != "http" {
 		log.Warningf(ctx, "Invalid URL %s", url)
@@ -179,15 +182,35 @@ func saveUrl(cfg *config.Instance, w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, url, 302)
 }
 
+func isValidUser(cfg *config.Instance, w http.ResponseWriter, r *http.Request) bool {
+	ctx := appengine.NewContext(r)
+	u := user.Current(ctx)
+	if u == nil {
+		url, _ := user.LoginURL(ctx, "/"+cfg.AdminPath+"/ls")
+		fmt.Fprintf(w, `<a href="%s">Sign in or register</a>`, url)
+		return false
+	}
+	if u.Admin {
+		return false
+	}
+	return true
+}
+
 func handler(w http.ResponseWriter, r *http.Request) {
 	cfg := config.Get()
 	size := len(cfg.AdminPath) + 2
 	if r.Method == "POST" {
-		saveUrl(cfg, w, r)
+		if isValidUser(cfg, w, r) {
+			saveUrl(cfg, w, r)
+		}
 	} else if "/"+cfg.AdminPath+"/ls" == r.URL.Path {
-		showStats(w, r)
+		if isValidUser(cfg, w, r) {
+			showStats(w, r)
+		}
 	} else if len(r.URL.Path) > size && "/"+cfg.AdminPath+"/" == r.URL.Path[:size] {
-		showUrlModificationForm(cfg, w, r, r.URL.Path[size:])
+		if isValidUser(cfg, w, r) {
+			showUrlModificationForm(cfg, w, r, r.URL.Path[size:])
+		}
 	} else {
 		redirectAndLog(cfg, w, r, r.URL.Path[1:])
 	}
