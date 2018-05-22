@@ -80,10 +80,13 @@ func showStats(w http.ResponseWriter, r *http.Request) {
 		return arr[i].allTime < arr[j].allTime
 	})
 
-	for _, y := range arr {
-		fmt.Fprintf(w, "%-15s %4d %4d %4d\n", y.key, y.week, y.month,
+	fmt.Fprintf(w, "<pre>\n")
+	for i := range arr {
+		y := arr[len(arr)-i-1]
+		fmt.Fprintf(w, "  %-15s %4d %4d %4d\n", y.key, y.week, y.month,
 			y.allTime)
 	}
+	fmt.Fprintf(w, "</pre>\n")
 }
 
 func redirectAndLog(cfg *config.Instance, w http.ResponseWriter, r *http.Request, key string) {
