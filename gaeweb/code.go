@@ -165,7 +165,11 @@ func saveUrl(cfg *config.Instance, w http.ResponseWriter, r *http.Request) {
 	}
 
 	url := r.FormValue("url")
-	if len(url) < 4 || url[:4] != "http" {
+	if len(url) == 0 {
+		clt := datastore.NewGaeClient(ctx)
+		clt.Delete(key)
+		return
+	} else if len(url) < 4 || url[:4] != "http" {
 		log.Warningf(ctx, "Invalid URL %s", url)
 		return
 	}
