@@ -81,7 +81,7 @@ func showStats(w http.ResponseWriter, r *http.Request) {
 		return arr[i].allTime < arr[j].allTime
 	})
 
-	fmt.Fprintf(w, "<pre>\n")
+	fmt.Fprintf(w, "<html><pre>\n")
 	for i := range arr {
 		y := arr[len(arr)-i-1]
 		fmt.Fprintf(w, "  %-15s %4d %4d %4d\n", y.key, y.week, y.month,
@@ -89,7 +89,7 @@ func showStats(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprintf(w, "</pre>\n")
 	url, _ := user.LogoutURL(ctx, "/")
-	fmt.Fprintf(w, `<a href="%s">sign out</a>)`, url)
+	fmt.Fprintf(w, `<a href="%s">sign out</a></html>`, url)
 }
 
 func redirectAndLog(cfg *config.Instance, w http.ResponseWriter, r *http.Request, key string) {
@@ -142,8 +142,6 @@ Key:<br />
 <input type="text" name="key" value="%s"><br />
 URL:<br />
 <input type="text" name="url" value="%s"><br />
-Validate:<br />
-<input type="text" name="check"><br />
 <br />
 <input type="submit" value="Submit">
 </form></html>`
@@ -153,10 +151,6 @@ Validate:<br />
 func saveUrl(cfg *config.Instance, w http.ResponseWriter, r *http.Request) {
 	// config.Check of "", means readonly system.
 	if cfg.Check == "" {
-		return
-	}
-
-	if r.FormValue("check") != cfg.Check {
 		return
 	}
 
@@ -186,13 +180,16 @@ func isValidUser(cfg *config.Instance, w http.ResponseWriter, r *http.Request) b
 	ctx := appengine.NewContext(r)
 	u := user.Current(ctx)
 	if u == nil {
+		log.Warningf(ctx, "No user logged in.")
 		url, _ := user.LoginURL(ctx, "/"+cfg.AdminPath+"/ls")
 		fmt.Fprintf(w, `<a href="%s">Sign in or register</a>`, url)
 		return false
 	}
-	if u.Admin {
+	if !u.Admin {
+		log.Warningf(ctx, "Not an administrator.")
 		return false
 	}
+	log.Infof(ctx, "Administrator.")
 	return true
 }
 
