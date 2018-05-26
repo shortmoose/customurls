@@ -2,6 +2,23 @@
 
 Custom URL service - runs on Google appengine
 
+## Features
+
+This is a simple, yet useful, URL shortener/beautifier. This allows you to
+assign URLs to keys so a URL like, https://<your-domain>/<key>, will redirect you
+to the specified URL. This can be used for the purpose of shortening URLs,
+or the reason I use it is to make it easier to remember URLs. For example
+https://mydomain.com/expenses is a lot easier to remember than some long
+Google docs URL.
+
+- https://<domain>/<key> will redirect you to the assigned URL.
+- https://<domain>/admin/<key> will allow you to assign a URL to the given key.
+- https://<domain>/admin/ls will give you information about how often each
+  key has been used.
+
+All "admin" links are only accessible to administrators of your site. This allows
+you to easily configure who can modify the URL to key mapping.
+
 ## Installation
 
 ```shell
