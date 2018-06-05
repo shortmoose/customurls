@@ -19,6 +19,22 @@ Google docs URL.
 All "admin" links are only accessible to administrators of your site. This allows
 you to easily configure who can modify the URL to key mapping.
 
+## Setting up a custom search in your browser
+
+For even simpler use in Chrome, Firefox, and possibly other browsers you can make typing your custom URLs even simpler by setting up a custom search. Now instead of having to type 'http://domain/key', now you will be able to type something like 'cu key', here is how you do it:
+
+### Chrome
+
+Open Chrome, go to Settings, manage search engines, add new search engine, for keyword enter something like 'cu' (the shorter the better), for URL enter your custom URLs URL, so for example 'https://examplecustomurl.appspot.com/%s'.
+
+Now try it out by typing 'cu <key>' in your search bar.
+  
+### Firefox
+
+It seems to be a little more complicated to do this on Firefox, but I did get it to work. For instructions see:
+
+https://superuser.com/questions/7327/how-to-add-a-custom-search-engine-to-firefox
+
 ## Installation
 
 ```shell
