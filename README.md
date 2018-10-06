@@ -4,7 +4,7 @@ Custom URL service - runs on Google appengine
 
 ## Features
 
-This is a simple, yet useful, URL shortener/beautifier. This allows you to
+This is a simple, yet useful, URL shortener. This allows you to
 assign URLs to keys so a URL like, https://\<your-domain\>/\<key\>, will redirect you
 to the specified URL. This can be used for the purpose of shortening URLs,
 or the reason I use it is to make it easier to remember URLs. For example
