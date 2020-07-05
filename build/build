@@ -2,7 +2,7 @@
 
 set -x
 
-go tool vet -all -shadow=true .
+shadow ./...
 if [ $? -ne 0 ]; then
   exit 1
 fi
@@ -14,7 +14,7 @@ go test ./... # > /tmp/testout
 #  exit 1
 #fi
 
-go install ./...
+go build ./...
 if [ $? -ne 0 ]; then
   exit 1
 fi
