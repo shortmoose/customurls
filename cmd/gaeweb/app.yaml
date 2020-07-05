@@ -1,12 +1,6 @@
-runtime: go
-api_version: go1
+runtime: go114
 
 env_variables:
   CHECK: 'supersecret'
   DEFAULT_URL: 'https://www.google.com'
   ADMIN_PATH: 'admin'
-
-handlers:
-- url: /.*
-  script: _go_app
-  secure: always

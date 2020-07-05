@@ -1,8 +1,10 @@
-package code
+package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
+	"os"
 	"sort"
 	"time"
 
@@ -12,9 +14,6 @@ import (
 	"github.com/nthnca/customurls/lib/util"
 
 	"github.com/nthnca/datastore"
-	"google.golang.org/appengine"
-	"google.golang.org/appengine/log"
-	"google.golang.org/appengine/user"
 )
 
 type usage struct {
@@ -25,9 +24,23 @@ type usage struct {
 	allTime int
 }
 
+func main() {
+	http.HandleFunc("/", handler)
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+		log.Printf("Defaulting to port %s", port)
+	}
+
+	log.Printf("Listening on port %s", port)
+	if err := http.ListenAndServe(":"+port, nil); err != nil {
+		log.Fatal(err)
+	}
+}
+
 func showStats(w http.ResponseWriter, r *http.Request) {
-	ctx := appengine.NewContext(r)
-	clt := datastore.NewGaeClient(ctx)
+	clt, err := datastore.NewCloudClient(os.Getenv("GOOGLE_CLOUD_PROJECT"))
 
 	data := make(map[string]usage)
 
@@ -41,9 +54,9 @@ func showStats(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var logs []entity.LogEntry
-	_, err := clt.GetAll(clt.NewQuery("LogEntry"), &logs)
+	_, err = clt.GetAll(clt.NewQuery("LogEntry"), &logs)
 	if err != nil {
-		log.Warningf(ctx, "Unable to get log entries: %v\n", err)
+		// log.Warningf(ctx, "Unable to get log entries: %v\n", err)
 		return
 	}
 
@@ -88,46 +101,44 @@ func showStats(w http.ResponseWriter, r *http.Request) {
 			y.allTime)
 	}
 	fmt.Fprintf(w, "</pre>\n")
-	url, _ := user.LogoutURL(ctx, "/")
-	fmt.Fprintf(w, `<a href="%s">sign out</a></html>`, url)
+	// url, _ := user.LogoutURL(ctx, "/")
+	// fmt.Fprintf(w, `<a href="%s">sign out</a></html>`, url)
 }
 
 func redirectAndLog(cfg *config.Instance, w http.ResponseWriter, r *http.Request, key string) {
-	ctx := appengine.NewContext(r)
 
 	key = util.GetKey(key)
 	if key == "" {
-		log.Warningf(ctx, "Invalid key attempted.")
+		// log.Warningf(ctx, "Invalid key attempted.")
 		http.Redirect(w, r, cfg.DefaultURL, 302)
 		return
 	}
 
-	clt := datastore.NewGaeClient(ctx)
+	clt, err := datastore.NewCloudClient(os.Getenv("GOOGLE_CLOUD_PROJECT"))
 	entry, err := client.LoadEntry(clt, key)
 	if err != nil {
-		log.Warningf(ctx, "Unable to load '%s': %v", key, err)
+		// log.Warningf(ctx, "Unable to load '%s': %v", key, err)
 		http.Redirect(w, r, cfg.DefaultURL, 302)
 		return
 	}
 
-	log.Infof(ctx, "Redirecting %s to %s", key, entry.Value)
+	// log.Infof(ctx, "Redirecting %s to %s", key, entry.Value)
 	client.CreateLogEntry(clt, key, entry.Value)
 	http.Redirect(w, r, entry.Value, 302)
 }
 
 func showUrlModificationForm(cfg *config.Instance, w http.ResponseWriter, r *http.Request, key string) {
-	ctx := appengine.NewContext(r)
 	key = util.GetKey(key)
 	if key == "" {
-		log.Warningf(ctx, "Invalid key attempted.")
+		// log.Warningf(ctx, "Invalid key attempted.")
 		http.Redirect(w, r, cfg.DefaultURL, 302)
 		return
 	}
 
-	clt := datastore.NewGaeClient(ctx)
+	clt, err := datastore.NewCloudClient(os.Getenv("GOOGLE_CLOUD_PROJECT"))
 	entry, err := client.LoadEntry(clt, key)
 	if err != nil {
-		log.Warningf(ctx, "Unable to load '%s': %v", key, err)
+		// log.Warningf(ctx, "Unable to load '%s': %v", key, err)
 		showUrlForm(w, key, "")
 		return
 	}
@@ -154,43 +165,45 @@ func saveUrl(cfg *config.Instance, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := appengine.NewContext(r)
 	key := util.GetKey(r.FormValue("key"))
 	if key == "" {
-		log.Warningf(ctx, "Invalid Key %s", key)
+		//	log.Warningf(ctx, "Invalid Key %s", key)
 		return
 	}
 
 	url := r.FormValue("url")
 	if len(url) == 0 {
-		clt := datastore.NewGaeClient(ctx)
+		clt, _ := datastore.NewCloudClient(os.Getenv("GOOGLE_CLOUD_PROJECT"))
 		client.DeleteEntry(clt, key)
 		return
 	} else if len(url) < 4 || url[:4] != "http" {
-		log.Warningf(ctx, "Invalid URL %s", url)
+		// log.Warningf(ctx, "Invalid URL %s", url)
 		return
 	}
 
-	clt := datastore.NewGaeClient(ctx)
+	clt, _ := datastore.NewCloudClient(os.Getenv("GOOGLE_CLOUD_PROJECT"))
 	client.CreateEntry(clt, key, url)
 	http.Redirect(w, r, url, 302)
 }
 
 func isValidUser(cfg *config.Instance, w http.ResponseWriter, r *http.Request) bool {
-	ctx := appengine.NewContext(r)
-	u := user.Current(ctx)
-	if u == nil {
-		log.Warningf(ctx, "No user logged in.")
-		url, _ := user.LoginURL(ctx, "/"+cfg.AdminPath+"/ls")
-		fmt.Fprintf(w, `<a href="%s">Sign in or register</a>`, url)
-		return false
-	}
-	if !u.Admin {
-		log.Warningf(ctx, "Not an administrator.")
-		return false
-	}
-	log.Infof(ctx, "Administrator.")
-	return true
+	/*
+		ctx := appengine.NewContext(r)
+		u := user.Current(ctx)
+		if u == nil {
+			log.Warningf(ctx, "No user logged in.")
+			url, _ := user.LoginURL(ctx, "/"+cfg.AdminPath+"/ls")
+			fmt.Fprintf(w, `<a href="%s">Sign in or register</a>`, url)
+			return false
+		}
+		if !u.Admin {
+			log.Warningf(ctx, "Not an administrator.")
+			return false
+		}
+		log.Infof(ctx, "Administrator.")
+	*/
+	// return true
+	return false
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -211,8 +224,4 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		redirectAndLog(cfg, w, r, r.URL.Path[1:])
 	}
-}
-
-func init() {
-	http.HandleFunc("/", handler)
 }
