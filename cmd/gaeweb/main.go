@@ -8,10 +8,10 @@ import (
 	"sort"
 	"time"
 
-	"github.com/nthnca/customurls/lib/config"
-	"github.com/nthnca/customurls/lib/data/client"
-	"github.com/nthnca/customurls/lib/data/entity"
-	"github.com/nthnca/customurls/lib/util"
+	"github.com/nthnca/customurls/internal/config"
+	"github.com/nthnca/customurls/internal/data/client"
+	"github.com/nthnca/customurls/internal/data/entity"
+	"github.com/nthnca/customurls/internal/util"
 
 	"github.com/nthnca/datastore"
 )
