@@ -20,7 +20,13 @@ type keyContext struct {
 	urlArg *string
 }
 
+var (
+	cfg config.Instance
+)
+
 func main() {
+	cfg.ProjectID = os.Getenv("PROJECT_ID")
+
 	app := kingpin.New(
 		"custom-url",
 		"URL shortening service that runs in Google AppEngine")
@@ -40,7 +46,7 @@ func main() {
 }
 
 func (c *keyContext) get(_ *kingpin.ParseContext) error {
-	clt, err := datastore.NewCloudClient(config.Get().ProjectID)
+	clt, err := datastore.NewCloudClient(cfg.ProjectID)
 	if err != nil {
 		log.Fatalf("Failed to create client: %v\n", err)
 	}
@@ -55,7 +61,7 @@ func (c *keyContext) get(_ *kingpin.ParseContext) error {
 }
 
 func (c *keyContext) set(_ *kingpin.ParseContext) error {
-	clt, err := datastore.NewCloudClient(config.Get().ProjectID)
+	clt, err := datastore.NewCloudClient(cfg.ProjectID)
 	if err != nil {
 		log.Fatalf("Failed to create client: %v\n", err)
 	}
@@ -77,7 +83,7 @@ type usage struct {
 }
 
 func ls(_ *kingpin.ParseContext) error {
-	clt, err := datastore.NewCloudClient(config.Get().ProjectID)
+	clt, err := datastore.NewCloudClient(cfg.ProjectID)
 	if err != nil {
 		log.Fatalf("Failed to create client: %v\n", err)
 	}
