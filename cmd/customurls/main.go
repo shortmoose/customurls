@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -11,7 +12,7 @@ import (
 	"github.com/nthnca/customurls/internal/data/client"
 	"github.com/nthnca/customurls/internal/data/entity"
 
-	"github.com/nthnca/datastore"
+	"cloud.google.com/go/datastore"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
 
@@ -46,12 +47,13 @@ func main() {
 }
 
 func (c *keyContext) get(_ *kingpin.ParseContext) error {
-	clt, err := datastore.NewCloudClient(cfg.ProjectID)
+	ctx := context.Background()
+	clt, err := datastore.NewClient(ctx, cfg.ProjectID)
 	if err != nil {
 		log.Fatalf("Failed to create client: %v\n", err)
 	}
 
-	v, err := client.LoadEntry(clt, *c.keyArg)
+	v, err := client.LoadEntry(ctx, clt, *c.keyArg)
 	if err != nil {
 		log.Fatalf("Unable to get entry: %v\n", err)
 	}
@@ -61,12 +63,13 @@ func (c *keyContext) get(_ *kingpin.ParseContext) error {
 }
 
 func (c *keyContext) set(_ *kingpin.ParseContext) error {
-	clt, err := datastore.NewCloudClient(cfg.ProjectID)
+	ctx := context.Background()
+	clt, err := datastore.NewClient(ctx, cfg.ProjectID)
 	if err != nil {
 		log.Fatalf("Failed to create client: %v\n", err)
 	}
 
-	if err := client.CreateEntry(clt, *c.keyArg, *c.urlArg); err != nil {
+	if err := client.CreateEntry(ctx, clt, *c.keyArg, *c.urlArg); err != nil {
 		log.Fatalf("Unable to set entry: %v\n", err)
 	}
 
@@ -83,7 +86,8 @@ type usage struct {
 }
 
 func ls(_ *kingpin.ParseContext) error {
-	clt, err := datastore.NewCloudClient(cfg.ProjectID)
+	ctx := context.Background()
+	clt, err := datastore.NewClient(ctx, cfg.ProjectID)
 	if err != nil {
 		log.Fatalf("Failed to create client: %v\n", err)
 	}
@@ -91,16 +95,16 @@ func ls(_ *kingpin.ParseContext) error {
 	data := make(map[string]usage)
 
 	var entries []entity.Entry
-	keys, _ := clt.GetAll(clt.NewQuery("Entry"), &entries)
+	keys, _ := clt.GetAll(ctx, datastore.NewQuery("Entry"), &entries)
 
 	for i := range entries {
-		data[keys[i].GetName()] = usage{
-			key: keys[i].GetName(),
+		data[keys[i].Name] = usage{
+			key: keys[i].Name,
 			url: entries[i].Value}
 	}
 
 	var logs []entity.LogEntry
-	_, err = clt.GetAll(clt.NewQuery("LogEntry"), &logs)
+	_, err = clt.GetAll(ctx, datastore.NewQuery("LogEntry"), &logs)
 	if err != nil {
 		log.Fatalf("Unable to get log entries: %v\n", err)
 	}

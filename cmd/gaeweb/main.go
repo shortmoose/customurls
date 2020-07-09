@@ -1,14 +1,15 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
 
+	"cloud.google.com/go/datastore"
 	"github.com/nthnca/customurls/internal/config"
 	"github.com/nthnca/customurls/internal/data/client"
 	"github.com/nthnca/customurls/internal/util"
-	"github.com/nthnca/datastore"
 )
 
 var (
@@ -43,8 +44,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	clt, err := datastore.NewCloudClient(cfg.ProjectID)
-	entry, err := client.LoadEntry(clt, key)
+	ctx := context.Background()
+	clt, err := datastore.NewClient(ctx, cfg.ProjectID)
+	// clt, err := datastore.NewCloudClient(cfg.ProjectID)
+	entry, err := client.LoadEntry(ctx, clt, key)
 	if err != nil {
 		log.Printf("Unable to load '%s': %v", key, err)
 		http.Redirect(w, r, cfg.DefaultURL, 302)
@@ -52,6 +55,6 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Printf("Redirecting %s to %s", key, entry.Value)
-	client.CreateLogEntry(clt, key, entry.Value)
+	client.CreateLogEntry(ctx, clt, key, entry.Value)
 	http.Redirect(w, r, entry.Value, 302)
 }
