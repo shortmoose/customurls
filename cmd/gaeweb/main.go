@@ -46,7 +46,12 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	ctx := context.Background()
 	clt, err := datastore.NewClient(ctx, cfg.ProjectID)
-	// clt, err := datastore.NewCloudClient(cfg.ProjectID)
+	if err != nil {
+		log.Printf("Unable to connect '%s'", cfg.ProjectID)
+		http.Redirect(w, r, cfg.DefaultURL, 302)
+		return
+	}
+
 	entry, err := client.LoadEntry(ctx, clt, key)
 	if err != nil {
 		log.Printf("Unable to load '%s': %v", key, err)
