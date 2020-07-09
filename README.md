@@ -18,12 +18,6 @@ https://foo.example/expenses is a lot easier to remember than some long
 Google docs URL.
 
 - https://\<domain\>/\<key\> will redirect you to the assigned URL.
-- https://\<domain\>/admin/\<key\> will allow you to assign a URL to the given key.
-- https://\<domain\>/admin/ls will give you information about how often each
-  key has been used.
-
-All "admin" links are only accessible to administrators of your site. This allows
-you to easily configure who can modify the URL to key mapping.
 
 ## Setting up a custom search in your browser
 
@@ -41,17 +35,14 @@ It seems to be a little more complicated to do this on Firefox, but I did get it
 
 https://superuser.com/questions/7327/how-to-add-a-custom-search-engine-to-firefox
 
+
 ## Installation
 
 ```shell
-mkdir -p go/src/github.com/nthnca
-cd go/src/github.com/nthnca
 git clone https://github.com/nthnca/customurls.git
 cd customurls
-cp config/template.go config/config.go
-# vim config/config.go
-go get ./...
 go install ./...
+gcloud app deploy --project=<project> cmd/gaeweb/
 ```
 
 ## Basic Use
@@ -69,6 +60,7 @@ example if you are using a robot account you will need to:
 - fill out the form with a key, URL, and validate key of "supersecret"
 - now go to http://appname.appspot.com/key and you will be redirected to the
   URL you entered
+
 
 ## Using the command line interface to manage your URLs
 
