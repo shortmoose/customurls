@@ -4,6 +4,7 @@
 [![Go Report Card](https://goreportcard.com/badge/nthnca/customurls)](https://goreportcard.com/report/nthnca/customurls)
 [![Releases](https://img.shields.io/github/release-pre/nthnca/customurls.svg?sort=semver)](https://github.com/nthnca/customurls/releases)
 [![LICENSE](https://img.shields.io/github/license/nthnca/customurls.svg)](https://github.com/nthnca/customurls/blob/master/LICENSE)
+![Go](https://github.com/nthnca/customurls/workflows/Go/badge.svg)
 
 Custom URL service - runs on Google appengine
 
