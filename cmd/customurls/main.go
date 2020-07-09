@@ -42,6 +42,7 @@ func main() {
 	set.urlArg = setCmd.Arg("url", "URL").Required().String()
 
 	app.Command("ls", "list entries").Action(ls)
+	app.Command("version", "display version").Action(version)
 
 	kingpin.MustParse(app.Parse(os.Args[1:]))
 }
@@ -83,6 +84,12 @@ type usage struct {
 	week    int
 	month   int
 	allTime int
+}
+
+func version(_ *kingpin.ParseContext) error {
+	fmt.Printf("Version 0.2\n")
+
+	return nil
 }
 
 func ls(_ *kingpin.ParseContext) error {
