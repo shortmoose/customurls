@@ -1,6 +1,6 @@
 module github.com/nthnca/customurls
 
-go 1.14
+go 1.13
 
 require (
 	cloud.google.com/go/datastore v1.2.0 // indirect
