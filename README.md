@@ -1,6 +1,5 @@
 # customurls
 
-[![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white)](https://pkg.go.dev/github.com/nthnca/customurls)
 [![Go Report Card](https://goreportcard.com/badge/nthnca/customurls)](https://goreportcard.com/report/nthnca/customurls)
 [![Releases](https://img.shields.io/github/release-pre/nthnca/customurls.svg?sort=semver)](https://github.com/nthnca/customurls/releases)
 [![LICENSE](https://img.shields.io/github/license/nthnca/customurls.svg)](https://github.com/nthnca/customurls/blob/master/LICENSE)
