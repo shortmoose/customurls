@@ -6,7 +6,7 @@ import (
 
 func TestGetKey(t *testing.T) {
 	v := GetKey("abcDEF")
-	if v != "abcdef" {
+	if v != "abcdefg" {
 		t.Error("invalid value")
 	}
 
