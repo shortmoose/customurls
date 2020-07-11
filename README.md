@@ -22,7 +22,7 @@ Google docs URL.
 
 ## Installation
 
-This assumes you already know how to deploy apps to appengine.
+This assumes you already know how to create projects and deploy apps to appengine.
 
 ```shell
 git clone https://github.com/nthnca/customurls.git
