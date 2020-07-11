@@ -5,7 +5,7 @@
 [![LICENSE](https://img.shields.io/github/license/nthnca/customurls.svg)](https://github.com/nthnca/customurls/blob/master/LICENSE)
 [![Go](https://github.com/nthnca/customurls/workflows/Go/badge.svg)](https://github.com/nthnca/customurls/actions?query=workflow%3AGo)
 
-Custom URL service - runs on Google appengine
+URL shortening (custom URL) service - runs on Google App Engine.
 
 
 ## Features
