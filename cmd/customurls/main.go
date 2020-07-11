@@ -8,7 +8,6 @@ import (
 	"sort"
 	"time"
 
-	"github.com/nthnca/customurls/internal/config"
 	"github.com/nthnca/customurls/internal/data/client"
 	"github.com/nthnca/customurls/internal/data/entity"
 
@@ -22,11 +21,11 @@ type keyContext struct {
 }
 
 var (
-	cfg config.Instance
+	projectID string
 )
 
 func main() {
-	cfg.ProjectID = os.Getenv("PROJECT_ID")
+	projectID = os.Getenv("PROJECT_ID")
 
 	app := kingpin.New(
 		"custom-url",
@@ -49,7 +48,7 @@ func main() {
 
 func (c *keyContext) get(_ *kingpin.ParseContext) error {
 	ctx := context.Background()
-	clt, err := datastore.NewClient(ctx, cfg.ProjectID)
+	clt, err := datastore.NewClient(ctx, projectID)
 	if err != nil {
 		log.Fatalf("Failed to create client: %v\n", err)
 	}
@@ -65,7 +64,7 @@ func (c *keyContext) get(_ *kingpin.ParseContext) error {
 
 func (c *keyContext) set(_ *kingpin.ParseContext) error {
 	ctx := context.Background()
-	clt, err := datastore.NewClient(ctx, cfg.ProjectID)
+	clt, err := datastore.NewClient(ctx, projectID)
 	if err != nil {
 		log.Fatalf("Failed to create client: %v\n", err)
 	}
@@ -94,7 +93,7 @@ func version(_ *kingpin.ParseContext) error {
 
 func ls(_ *kingpin.ParseContext) error {
 	ctx := context.Background()
-	clt, err := datastore.NewClient(ctx, cfg.ProjectID)
+	clt, err := datastore.NewClient(ctx, projectID)
 	if err != nil {
 		log.Fatalf("Failed to create client: %v\n", err)
 	}

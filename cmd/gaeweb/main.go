@@ -7,13 +7,13 @@ import (
 	"os"
 
 	"cloud.google.com/go/datastore"
-	"github.com/nthnca/customurls/internal/config"
 	"github.com/nthnca/customurls/internal/data/client"
 	"github.com/nthnca/customurls/internal/util"
 )
 
 var (
-	cfg config.Instance
+	projectID string
+	defaultURL string
 )
 
 func main() {
@@ -25,9 +25,9 @@ func main() {
 		log.Printf("Defaulting to port %s", port)
 	}
 
-	cfg.ProjectID = os.Getenv("GOOGLE_CLOUD_PROJECT")
-	cfg.DefaultURL = os.Getenv("DEFAULT_URL")
-	log.Printf("INIT: ProjectID: %s, DefaultURL: %s", cfg.ProjectID, cfg.DefaultURL)
+	projectID = os.Getenv("GOOGLE_CLOUD_PROJECT")
+	defaultURL = os.Getenv("DEFAULT_URL")
+	log.Printf("INIT: ProjectID: %s, DefaultURL: %s", projectID, defaultURL)
 
 	log.Printf("Listening on port %s", port)
 	// Don't put anything important past this next line, it won't get run.
@@ -40,22 +40,22 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	key := util.GetKey(r.URL.Path[1:])
 	if key == "" {
 		log.Printf("Empty key attempted.")
-		http.Redirect(w, r, cfg.DefaultURL, 302)
+		http.Redirect(w, r, defaultURL, 302)
 		return
 	}
 
 	ctx := context.Background()
-	clt, err := datastore.NewClient(ctx, cfg.ProjectID)
+	clt, err := datastore.NewClient(ctx, projectID)
 	if err != nil {
-		log.Printf("Unable to connect '%s'", cfg.ProjectID)
-		http.Redirect(w, r, cfg.DefaultURL, 302)
+		log.Printf("Unable to connect '%s'", projectID)
+		http.Redirect(w, r, defaultURL, 302)
 		return
 	}
 
 	entry, err := client.LoadEntry(ctx, clt, key)
 	if err != nil {
 		log.Printf("Unable to load '%s': %v", key, err)
-		http.Redirect(w, r, cfg.DefaultURL, 302)
+		http.Redirect(w, r, defaultURL, 302)
 		return
 	}
 
