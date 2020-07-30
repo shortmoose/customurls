@@ -1,9 +1,9 @@
 # customurls
 
-[![Go Report Card](https://goreportcard.com/badge/nthnca/customurls)](https://goreportcard.com/report/nthnca/customurls)
-[![Releases](https://img.shields.io/github/release-pre/nthnca/customurls.svg?sort=semver)](https://github.com/nthnca/customurls/releases)
-[![LICENSE](https://img.shields.io/github/license/nthnca/customurls.svg)](https://github.com/nthnca/customurls/blob/master/LICENSE)
-[![Go](https://github.com/nthnca/customurls/workflows/Go/badge.svg)](https://github.com/nthnca/customurls/actions?query=workflow%3AGo)
+[![Go Report Card](https://goreportcard.com/badge/shortmoose/customurls)](https://goreportcard.com/report/shortmoose/customurls)
+[![Releases](https://img.shields.io/github/release-pre/shortmoose/customurls.svg?sort=semver)](https://github.com/shortmoose/customurls/releases)
+[![LICENSE](https://img.shields.io/github/license/shortmoose/customurls.svg)](https://github.com/shortmoose/customurls/blob/master/LICENSE)
+[![Go](https://github.com/shortmoose/customurls/workflows/Go/badge.svg)](https://github.com/shortmoose/customurls/actions?query=workflow%3AGo)
 
 URL shortening (custom URL) service - runs on Google App Engine.
 
@@ -25,7 +25,7 @@ Google docs URL.
 This assumes you already know how to create projects and deploy apps to appengine.
 
 ```shell
-git clone https://github.com/nthnca/customurls.git
+git clone https://github.com/shortmoose/customurls.git
 cd customurls
 gcloud app deploy --project=<project_id> cmd/gaeweb/
 go install ./...  # This will install the command line tools 'customurls'
