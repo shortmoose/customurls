@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -ev
+
+if [ $BRANCH_NAME != main ]; then
+    FLAG=--no-promote 
+fi
+
+gcloud app deploy --quiet -v $BRANCH_NAME $FLAG cmd/gaeweb/
