@@ -1,8 +1,5 @@
 runtime: go113
 
-env_variables:
-  DEFAULT_URL: 'https://www.google.com'
-
 handlers:
 - url: /.*
   secure: always

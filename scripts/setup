@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -ev
+
+cp $2 $1/internal/redirects/
+
+cd $1
+
+go build ./...
+
+go test ./...
