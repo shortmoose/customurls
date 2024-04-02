@@ -3,7 +3,7 @@
 [![Go Report Card](https://goreportcard.com/badge/shortmoose/customurls)](https://goreportcard.com/report/shortmoose/customurls)
 [![Releases](https://img.shields.io/github/release-pre/shortmoose/customurls.svg?sort=semver)](https://github.com/shortmoose/customurls/releases)
 [![LICENSE](https://img.shields.io/github/license/shortmoose/customurls.svg)](https://github.com/shortmoose/customurls/blob/master/LICENSE)
-[![Go](https://github.com/shortmoose/customurls/workflows/Go/badge.svg)](https://github.com/shortmoose/customurls/actions?query=workflow%3AGo)
+![Workflow](https://github.com/shortmoose/customurls/actions/workflows/go.yml/badge.svg)
 
 URL shortening (custom URL) service - runs on Google App Engine.
 
