@@ -6,4 +6,4 @@ if [ $BRANCH_NAME != main ]; then
     FLAG=--no-promote 
 fi
 
-gcloud app deploy --quiet -v $BRANCH_NAME $FLAG cmd/gaeweb/
+gcloud app deploy --quiet -v $BRANCH_NAME $FLAG --no-cache cmd/gaeweb/
